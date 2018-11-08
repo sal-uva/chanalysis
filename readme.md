@@ -3,11 +3,11 @@ The chanalysis Python scripts in this repository offer a convenient approach to 
 
 It's a work in progress, but the current chanalysis scripts include:
 
-1. **Frequency histograms**: Visualise the occurances of a particular word over time
-2. **Identifying popular posts**: Show which posts are most replied to and thus garnered attention.
-3. **Word trees**: Show what words usually follow on another word or set of words.
-4. **Downloading images**: Download images from a set of posts
-5. **Making an image wall**: Use images to create an image wall.
+1. `createHistogram.py` **Frequency histograms**: Visualise the occurances of a particular word over time
+2. `getReplies.py` **Identifying popular posts**: Show which posts are most replied to and thus garnered attention.
+3. `createTokens.py` **Tokenization**: Tokenise the text (lemmatization and stemming).
+4. `getImages.py` **Downloading images**: Download images from a set of posts
+5. `createImageWall.py` **Making an image wall**: Use downloaded images to create an image wall.
 
 Note that these scripts might contain some bugs. More scripts will be added later.
 
