@@ -27,7 +27,7 @@ if len(sys.argv) < 2:
 	print("Usage: python3 createLongString.py [--source] [--output] [--timespan] [--timecol]")
 	print()
 	print("--source: the relative path to a csv file from 4CAT (e.g. 'data/datasheet.csv').")
-	print("--textcol (optional): Default 'body'. The text column in the csv. ")
+	print("--textcol (optional): default 'body'. The text column in the csv. ")
 	print("--timespan (optional): default 'days' - if provided, create text files for different timespans. Can be 'days' or 'months'.")
 	print("--timecol (optional): default 'timespan' - the csv column in which the time values are stored. Should start with format yyyy-mm-dd.")
 	print()

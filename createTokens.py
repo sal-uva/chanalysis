@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 
-def createTokens(li_strings, stemming=False, lemmatizing=False, time=''):
+def createTokens(li_strings, output, stemming=False, lemmatizing=False, time=''):
 	"""
 	Saves tokens in pickle files.
 
@@ -34,14 +34,16 @@ def createTokens(li_strings, stemming=False, lemmatizing=False, time=''):
 			li_all_tokens.append(li_tokens)
 		
 		if index % 100 == 0:
-			print('Tokenising finished for string ' + str(index) + '/' + str(len_comments))
+			print('Tokenizing finished for string ' + str(index) + '/' + str(len_comments))
 	
 	print('Saving tokens')
 	if time == '':
 		time = str(datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
 	if not os.path.exists('output/'):
 		os.makedirs('output/')
-	pickle.dump(li_all_tokens, open('output/tokens_' + time + '.p', 'wb'))
+	if not os.path.exists('output/' + output):
+		os.makedirs('output/' + output)
+	pickle.dump(li_all_tokens, open('output/' + output + 'tokens_' + time + '.p', 'wb'))
 
 def getFilteredText(string, stemming=False, lemmatizing=False):
 	
@@ -140,6 +142,15 @@ else:
 		if arg[0:9] == "--source=":
 			source = arg[9:len(arg)]
 			li_args.append(source)
+
+			# Use the folder name as the folder name for the tokens
+			folder = str(source).split('/')
+			folder = folder[len(folder) - 1]
+			folder = folder[:-4] + '_tokens/'
+			li_args.append(folder)
+		elif arg[0:7] == "--output=":
+			output = arg[7:len(arg)]
+			li_args.append(output)
 		elif arg[0:7] == "--text=":
 			text_column = arg[7:len(arg)]
 			li_args.append(text_column)
@@ -159,6 +170,7 @@ else:
 		elif arg[0:10] == "--timecol=":
 			time_column = arg[10:len(arg)]
 			li_args.append(time_column)
+
 	print(li_args)
 	if source == '' or not os.path.isfile(source):
 		print("Please provide a valid input file like this: --source=data/datasheet.csv")
@@ -168,6 +180,7 @@ else:
 		df = pd.read_csv(source)
 
 		if timespan == False:
+			df = df.sort_values(by=[timecol])
 			li_input = df[text_column].tolist()
 			createTokens(li_input, stemming=stem, lemmatizing=lemma)
 		else:
@@ -182,9 +195,12 @@ else:
 				print('Please provide a valid date format (\'days\' or \'months\')')
 				sys.exit(1)
 
-			li_dates = set(li_dates)
+			li_dates = sorted(set(li_dates))
+			
+			print('Timespans to make tokens for:')
+			print(li_dates)
 
 			for date_slice in li_dates:
-				df_date = df[df[time_column].contains(date_slice)]
+				df_date = df[df[time_column].str.contains(date_slice)]
 				li_input = df_date[text_column].tolist()
-				createTokens(li_input, source, stemming=stem, lemmatizing=lemma, time=date_slice)
+				createTokens(li_input, folder, stemming=stem, lemmatizing=lemma, time=date_slice)

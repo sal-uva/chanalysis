@@ -2,3 +2,4 @@ pandas
 matplotlib
 Pillow
 bs4
+sklearn
