@@ -290,7 +290,7 @@ else:
 		elif arg[0:9] == "--output=":
 			output = arg[9:len(arg)]
 			li_args.append(output)
-		elif "--image_md5=" in arg:
+		elif "--imagecol=" in arg:
 			img_column = arg[12:len(arg)]
 			li_args.append(img_column)
 		elif "--top=" in arg:
