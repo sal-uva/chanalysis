@@ -1,3 +1,9 @@
 *.csv
+<<<<<<< HEAD
 *.p
 output/longstring_star-wars.txt
+=======
+output/
+executefile.py
+*.p
+>>>>>>> ed849605c5d5bc9f680ae919fd8ff719fb8db7fc
