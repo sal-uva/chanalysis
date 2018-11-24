@@ -84,8 +84,9 @@ else:
 
 	else:
 		files = os.listdir(source)
-		files = [source + file for file in files if file[-5:] != '.webm']
-		#size = int(math.sqrt(len(files)))
+		li_allowed_files = ['.gif', '.jpg', '.png']
+		files = [source + file for file in files if file.lower().endswith(tuple(li_allowed_files))]
+
 		w = int(math.sqrt(len(files))) + int(math.sqrt(len(files)) / 3)
 		h = int(math.sqrt(len(files))) - int(math.sqrt(len(files)) / 3)
 		

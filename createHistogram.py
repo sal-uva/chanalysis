@@ -12,7 +12,15 @@ from matplotlib.ticker import ScalarFormatter
 
 def createHistogram(df, querystring='', time_column='timespan', time_format='months', include_normalised=False):
 	
-	li_dates = df[time_column].values.tolist()
+	df = df.sort_values(by=[time_column])
+
+	endstring = 10
+	if time_format == 'months':
+		endstring = 7
+	elif time_format == 'days':
+		endstring = 10
+
+	li_dates = [date[0:endstring] for date in df[time_column]]
 	li_timeticks = []
 
 	dateformat = '%d-%m-%y'
@@ -20,14 +28,12 @@ def createHistogram(df, querystring='', time_column='timespan', time_format='mon
 	df_histo = pd.DataFrame()
 
 	if time_format == 'months':
-		df['date_histo'] = [date[:7] for date in df[time_column]]
+		df['date_histo'] = li_dates
 		df = df.groupby(by=['date_histo']).agg(['count'])
-		# print(df)
 
 	elif time_format == 'days':
-		df['date_histo'] = [date[:10] for date in df[time_column]]
+		df['date_histo'] = li_dates
 		df = df.groupby(by=['date_histo']).agg(['count'])
-		# print(df)
 
 	# Create new list of all dates between start and end date
 	# Sometimes one date has zero counts, and gets skipped by matplotlib
@@ -36,12 +42,13 @@ def createHistogram(df, querystring='', time_column='timespan', time_format='mon
 	if time_format == 'months':
 		d1 = datetime.strptime(df.index[0], "%Y-%m").date()  			# start date
 		d2 = datetime.strptime(df.index[len(df) - 1], "%Y-%m").date()	# end date
-		delta = d2 - d1         										# timedelta
+		delta = d2 - d1													# timedelta
 		for i in range(delta.days + 1):
 			date = d1 + timedelta(days=i)
-			date = str(date)[:7]
+			date = str(date)[:endstring]
 			if date not in li_dates:
 				li_dates.append(date)
+				li_check_dates.append(date)
 		
 	if time_format == 'days':
 		d1 = datetime.strptime(df.index[0], "%Y-%m-%d").date()			# start date
@@ -64,6 +71,8 @@ def createHistogram(df, querystring='', time_column='timespan', time_format='mon
 		else:
 			li_counts[index] = 0
 
+	print(li_index_dates)
+	
 	df_histo['date'] = li_dates
 	df_histo['count'] = li_counts
 
@@ -79,10 +88,12 @@ def createHistogram(df, querystring='', time_column='timespan', time_format='mon
 	if not os.path.exists('output/'):
 		os.makedirs('output/')
 
-	print(df_histo)
-
+	print(df_histo.head())
+	print('Writing raw data to "' + 'output/histogram_data_' + querystring + '.csv')
 	# Safe the metadata
 	df_histo.to_csv('output/histogram_data_' + querystring + '.csv', index=False)
+
+	print('Making histogram...')
 
 	# Plot the graph!
 	fig, ax = plt.subplots(1,1)
@@ -108,9 +119,21 @@ def createHistogram(df, querystring='', time_column='timespan', time_format='mon
 	ax.set_ylabel('Absolute amount', color='#52b6dd')
 	#ax2.set_ylabel('Percentage of total comments', color='#d12d04')
 	#ax2.set_ylim(bottom=0)
+
+	# Reduce tick labels when there's more a lot of day dates:
+	if time_format == 'days' and len(set(li_dates)) > 50:
+		for index, label in enumerate(ax.xaxis.get_ticklabels()):
+			#print(label)
+			if label.get_text().endswith('-01'):
+				label.set_visible(True)
+			else:
+				label.set_visible(False)
+
 	plt.title('Posts containing "' + querystring + '"')
 
+	print('Saving svg file as "output/histogram_' + querystring + '.svg"')
 	plt.savefig('output/histogram_' + querystring + '.svg', dpi='figure',bbox_inches='tight')
+	print('Saving png file as "output/histogram_' + querystring + '.png"')
 	plt.savefig('output/histogram_' + querystring + '.png', dpi='figure',bbox_inches='tight')
 
 	print('Done! Saved .csv of data and .png & .svg in folder \'output/\'')

@@ -3,14 +3,19 @@ import os
 import re
 import pandas as pd
 
+<<<<<<< HEAD
 def createLongString(df, text_column, output, punctuation=True):
+=======
+def createLongString(li_text, text_column, output):
+>>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 	
 	# Write a txt file with all the strings
 	if not os.path.exists('output/'):
 		os.makedirs('output/')
-	txtfile_full = open('output/longstring_' + output + '.txt', 'a', encoding='utf-8')
+	txtfile_full = open('output/longstring_' + output + '.txt', 'w', encoding='utf-8')
 	
 
+<<<<<<< HEAD
 	for item in df[text_column]:
 		if item != 'nan':
 			item = str(item).lower()
@@ -20,6 +25,14 @@ def createLongString(df, text_column, output, punctuation=True):
 				regex = re.compile('[^a-zA-Z\)\(\-\n ]')
 			item = regex.sub('', item)
 			txtfile_full.write('%s' % item)
+=======
+	for post in li_text:
+		if post != 'nan':
+			post = str(post).lower()
+			regex = re.compile('[^a-zA-Z\)\(\.\,\-\n ]')	# includes brackets
+			post = regex.sub('', post)
+			txtfile_full.write('%s' % post)
+>>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 		
 # show manual if needed
 if len(sys.argv) < 2:
@@ -62,7 +75,7 @@ else:
 			li_args.append(output)
 		elif arg[0:12] == "--textcol=":
 			text_column = arg[7:len(arg)]
-			li_args.append(text_col)
+			li_args.append(text_column)
 		elif arg[0:11] == "--timespan=":
 			timespan = arg[11:len(arg)]
 			li_args.append(timespan)
@@ -89,10 +102,16 @@ else:
 	# If a timespan is provided, split the df and run the text module per timespan
 	if timespan != False:
 		li_all_dates = df[time_column].tolist()
+		endstring = 10
+
+		df = df.sort_values(by=[time_column])
+
 		if timespan == 'days':
-			li_dates = [date[0:10] for date in li_all_dates]
+			endstring = 10
+			li_dates = [date[0:endstring] for date in li_all_dates]
 		elif timespan == 'months':
-			li_dates = [date[0:7] for date in li_all_dates]
+			endstring = 7
+			li_dates = [date[0:endstring] for date in li_all_dates]
 		else:
 			print('Please provide a valid date format (\'days\' or \'months\')')
 			sys.exit(1)
@@ -101,9 +120,19 @@ else:
 
 		for date_slice in li_dates:
 			df_date = df[df['dates_to_check'] == date_slice]
+<<<<<<< HEAD
 			li_input = df_date[text_column].tolist()
 			createLongString(df, text_column, output + '_' + date_slice, punct)
 			print(str(output) + '_' + date_slice + '.txt created.')
 	else:
 		createLongString(df, text_column, output, punct)
+=======
+			li_posts = [text for text in df_date[text_column]]
+			print(str(len(li_posts)) + ' posts in ' + date_slice)
+			print(str(output) + '_' + date_slice.replace('\/', '-') + '.txt created.')
+			createLongString(li_posts, text_column, output + '_' + date_slice)
+	else:
+		li_posts = [text for text in df[text_column]]
+		createLongString(li_posts, text_column, output)
+>>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 		print('Done! ' + str(output) + '.txt created.')
