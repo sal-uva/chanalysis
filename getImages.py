@@ -26,6 +26,7 @@ def getImages(li_hashes, li_timestamps, li_counts, top=0, date='', output=''):
 	If an image download fails, it stores it in "failed_hashes.csv"
 
 	"""
+	print(li_hashes)
 
 	li_failedimgs = []
 	timetosleep = 8
@@ -52,7 +53,17 @@ def getImages(li_hashes, li_timestamps, li_counts, top=0, date='', output=''):
 	for index, img_hash in enumerate(li_hashes):
 		print('Attempting to fetch image ' + str(index + 1) + '/' + str(len(li_hashes)) + ' with hash ' + str(img_hash))
 		
-		img_time = datetime.datetime.strptime(li_timestamps[index], '%Y-%m-%d %H:%M:%S').timestamp()
+		alt_timeformat = False
+		try:
+			datetime.datetime.strptime(li_timestamps[index], '%Y-%m-%d %H:%M:%S').timestamp()
+		except ValueError:
+			alt_timeformat = True
+		
+		if not alt_timeformat:
+			img_time = datetime.datetime.strptime(li_timestamps[index], '%Y-%m-%d %H:%M:%S').timestamp()
+		else:
+			img_time = datetime.datetime.strptime(li_timestamps[index], '%d/%m/%Y %H:%M').timestamp()
+
 		imagefile = False
 
 		# Add a label for the counts for the ultimate filename
@@ -290,8 +301,8 @@ else:
 		elif arg[0:9] == "--output=":
 			output = arg[9:len(arg)]
 			li_args.append(output)
-		elif "--image_md5=" in arg:
-			img_column = arg[12:len(arg)]
+		elif "--imagecol=" in arg:
+			img_column = arg[11:len(arg)]
 			li_args.append(img_column)
 		elif "--top=" in arg:
 			top = int(arg[6:len(arg)])
@@ -319,7 +330,7 @@ else:
 			# Make a list of the hashes and of the corresponding time of posting to know whether to query 4CAT
 			for index, row in df.iterrows():
 				# Filter out nans (with rows wihout images)
-				if type(row[img_column]) == str:
+				if type(row[img_column]) == str and row[img_column] != 'N':
 					li_input.append(row[img_column])
 					li_timestamps.append(row[time_column])
 

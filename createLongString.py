@@ -93,8 +93,9 @@ else:
 			df_date = df[df['dates_to_check'] == date_slice]
 			li_posts = [text for text in df_date[text_column]]
 			print(str(len(li_posts)) + ' posts in ' + date_slice)
-			print(str(output) + '_' + date_slice + '.txt created.')
+			print(str(output) + '_' + date_slice.replace('\/', '-') + '.txt created.')
 			createLongString(li_posts, text_column, output + '_' + date_slice)
 	else:
-		createLongString(df, text_column, output)
+		li_posts = [text for text in df[text_column]]
+		createLongString(li_posts, text_column, output)
 		print('Done! ' + str(output) + '.txt created.')
