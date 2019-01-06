@@ -3,11 +3,7 @@ import os
 import re
 import pandas as pd
 
-<<<<<<< HEAD
 def createLongString(df, text_column, output, punctuation=True):
-=======
-def createLongString(li_text, text_column, output):
->>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 	
 	# Write a txt file with all the strings
 	if not os.path.exists('output/'):
@@ -15,7 +11,6 @@ def createLongString(li_text, text_column, output):
 	txtfile_full = open('output/longstring_' + output + '.txt', 'w', encoding='utf-8')
 	
 
-<<<<<<< HEAD
 	for item in df[text_column]:
 		if item != 'nan':
 			item = str(item).lower()
@@ -25,14 +20,6 @@ def createLongString(li_text, text_column, output):
 				regex = re.compile('[^a-zA-Z\)\(\-\n ]')
 			item = regex.sub('', item)
 			txtfile_full.write('%s' % item)
-=======
-	for post in li_text:
-		if post != 'nan':
-			post = str(post).lower()
-			regex = re.compile('[^a-zA-Z\)\(\.\,\-\n ]')	# includes brackets
-			post = regex.sub('', post)
-			txtfile_full.write('%s' % post)
->>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 		
 # show manual if needed
 if len(sys.argv) < 2:
@@ -120,19 +107,9 @@ else:
 
 		for date_slice in li_dates:
 			df_date = df[df['dates_to_check'] == date_slice]
-<<<<<<< HEAD
 			li_input = df_date[text_column].tolist()
 			createLongString(df, text_column, output + '_' + date_slice, punct)
 			print(str(output) + '_' + date_slice + '.txt created.')
 	else:
 		createLongString(df, text_column, output, punct)
-=======
-			li_posts = [text for text in df_date[text_column]]
-			print(str(len(li_posts)) + ' posts in ' + date_slice)
-			print(str(output) + '_' + date_slice.replace('\/', '-') + '.txt created.')
-			createLongString(li_posts, text_column, output + '_' + date_slice)
-	else:
-		li_posts = [text for text in df[text_column]]
-		createLongString(li_posts, text_column, output)
->>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 		print('Done! ' + str(output) + '.txt created.')
