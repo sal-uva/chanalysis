@@ -3,9 +3,21 @@ import os
 import re
 import pandas as pd
 
+def createLongString(li_input, output, punctuation=True):
+	"""
+	Simple function that writes the text in a list to a txt file as a long string.
 
-def createLongString(li_input, text_column, output, punctuation=True):
-	
+	:param li_input		list, a list with the values
+	:param output		string, the output filename
+	:param punctuataion bool, whether to keep period and comma symbols
+
+	"""
+
+	print('Writing to txt file...')
+
+	if punctuation == False:
+		print('Removing punctuation')
+
 	# Write a txt file with all the strings
 	if not os.path.exists('output/'):
 		os.makedirs('output/')
@@ -20,6 +32,8 @@ def createLongString(li_input, text_column, output, punctuation=True):
 				regex = re.compile('[^a-zA-Z\)\(\-\n ]')
 			item = regex.sub('', item)
 			txtfile_full.write('%s' % item)
+
+	print('output/' + str(output) + '.txt created.')
 		
 # show manual if needed
 if len(sys.argv) < 2:
@@ -27,11 +41,10 @@ if len(sys.argv) < 2:
 	print("Creates a txt file of a long sequence of a column in a csv.")
 	print("Useful to make Word Tree visualisations.")
 	print()
-	print("Usage: python3 createLongString.py [--source] [--output] [--timespan] [--timecol] [--puct]")
+	print("Usage: python3 createLongString.py [--source] [--timespan] [--timecol] [--puct]")
 	print()
-	print("--source: the relative path to a csv file from 4CAT (e.g. 'data/datasheet.csv').")
-	print("--textcol (optional): default 'body'. The text column in the csv. ")
 	print("--timespan (optional): default 'days' - if provided, create text files for different timespans. Can be 'days' or 'months'.")
+	print("--textcol (optional): default 'body'. The text column in the csv. ")
 	print("--timecol (optional): default 'timespan' - the csv column in which the time values are stored. Should start with format yyyy-mm-dd.")
 	print("--timecol (optional): default 'timespan' - the csv column in which the time values are stored. Should start with format yyyy-mm-dd.")
 	print("--punct (optional): defulat true. Whether to keep commas and periods. Use true and false (e.g. '--punct=false') ")
@@ -48,7 +61,7 @@ else:
 	text_column = 'body'
 	timespan = False
 	time_column = 'timestamp'
-	punct = False
+	punct = True
 
 	# Interpret command line arguments
 	for arg in sys.argv:
@@ -110,8 +123,9 @@ else:
 			li_posts = [text for text in df_date[text_column]]
 			print(str(len(li_posts)) + ' posts in ' + date_slice)
 			print(str(output) + '_' + date_slice.replace('\/', '-') + '.txt created.')
-			createLongString(li_posts, text_column, output + '_' + date_slice, punctuation=punct)
+			createLongString(li_posts, output + '_' + date_slice, punctuation=punct)
 	else:
 		li_posts = [text for text in df[text_column]]
-		createLongString(li_posts, text_column, output, punctuation=punct)
-		print('Done! ' + str(output) + '.txt created.')
+		createLongString(li_posts, output, punctuation=punct)
+
+	print('Finished!')
