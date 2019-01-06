@@ -6,9 +6,10 @@ import sys
 import glob
 import os
 import math
-from PIL import Image
+from PIL import Image, ImageFile
 
 def waller(grid_x, grid_y, res_x, res_y, files, output_name, keep_ratio=False):
+	ImageFile.LOAD_TRUNCATED_IMAGES = True
 	imageWall = Image.new('RGB', (grid_x * res_x, grid_y * res_y))
 	counter = 0
 	loc_x = 0
@@ -84,12 +85,15 @@ else:
 
 	else:
 		files = os.listdir(source)
-		li_allowed_files = ['.gif', '.jpg', '.png']
+		li_allowed_files = ['.gif', '.jpg', '.jpeg', '.png']
 		files = [source + file for file in files if file.lower().endswith(tuple(li_allowed_files))]
 
-		w = int(math.sqrt(len(files))) + int(math.sqrt(len(files)) / 3)
-		h = int(math.sqrt(len(files))) - int(math.sqrt(len(files)) / 3)
-		
+		w = int(math.sqrt(len(files))) + int(math.sqrt(len(files)) / 3) + 1
+		h = int(math.sqrt(len(files))) - int(math.sqrt(len(files)) / 3) + 1
+			
+		print('Width: ' + str(w))
+		print('Heigth: ' + str(h))
+
 		waller(w, h, 300, 300,
 		   files,
 		   filename + '-wall.png', True)

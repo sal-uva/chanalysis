@@ -302,11 +302,7 @@ else:
 			output = arg[9:len(arg)]
 			li_args.append(output)
 		elif "--imagecol=" in arg:
-<<<<<<< HEAD
-			img_column = arg[12:len(arg)]
-=======
 			img_column = arg[11:len(arg)]
->>>>>>> bd1163bc92d99a0804656454184b279dc09e2338
 			li_args.append(img_column)
 		elif "--top=" in arg:
 			top = int(arg[6:len(arg)])
